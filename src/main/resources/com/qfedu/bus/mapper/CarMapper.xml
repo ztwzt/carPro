@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.bus.mapper.CarMapper">
+<!--    查询车辆信息-->
+    <resultMap id="BaseResultMap" type="com.qfedu.bus.domain.Car">
+        <result column="carnumber" jdbcType="VARCHAR" property="carnumber"
+        />
+        <result column="cartype" jdbcType="VARCHAR" property="cartype"
+        />
+        <result column="color" jdbcType="VARCHAR" property="color"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <result column="rentprice" jdbcType="DOUBLE"
+                property="rentprice"/>
+        <result column="deposit" jdbcType="DOUBLE" property="deposit"
+        />
+        <result column="isrenting" jdbcType="INTEGER"
+                property="isrenting"/>
+        <result column="description" jdbcType="VARCHAR"
+                property="description"/>
+        <result column="carimg" jdbcType="VARCHAR" property="carimg"
+        />
+        <result column="createtime" jdbcType="TIMESTAMP"
+                property="createtime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        carnumber, cartype, color, price, rentprice, deposit,isrenting, description,carimg, createtime
+    </sql>
+    <insert id="addCar">
+        insert into bus_car
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carnumber!=null and carnumber!=''">
+              carnumber,
+            </if>
+            <if test="cartype!=null and cartype!=''">
+                cartype,
+            </if>
+            <if test="color!=null and color!=''">
+                color,
+            </if>
+            <if test="price!=null and price!=''">
+            price,
+        </if>
+            <if test="rentprice!=null and rentprice!=''">
+            rentprice,
+        </if>
+            <if test="deposit!=null and deposit!=''">
+            deposit,
+        </if>
+            <if test="isrenting!=null and isrenting!=''">
+                isrenting,
+            </if>
+            <if test="description!=null and description!=''">
+                description,
+            </if>
+            <if test="carimg!=null and carimg!=''">
+                carimg,
+            </if>
+            <if test="createtime!=null">
+                createtime,
+            </if>
+        </trim>
+        values
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="carnumber!=null and carnumber!=''">
+                    #{carnumber},
+                </if>
+                <if test="cartype!=null and cartype!=''">
+                    #{cartype},
+                </if>
+                <if test="color!=null and color!=''">
+                    #{color},
+                </if>
+                <if test="price!=null and price!=''">
+                #{price},
+            </if>
+                <if test="rentprice!=null and rentprice!=''">
+                #{rentprice},
+            </if>
+            <if test="deposit!=null and deposit!=''">
+                #{deposit},
+            </if>
+                <if test="isrenting!=null and isrenting!=''">
+                    #{isrenting},
+                </if>
+
+                <if test="description!=null and description!=''">
+                    #{description},
+                </if>
+                <if test="carimg!=null and carimg!=''">
+                    #{carimg},
+                </if>
+                <if test="createtime!=null">
+                    #{createtime},
+                </if>
+            </trim>
+    </insert>
+<!--    修改车辆信息-->
+    <update id="updateCar">
+        update bus_car
+            <set>
+                <trim suffixOverrides=",">
+                    <if test="cartype!=null and cartype!=''">
+                        cartype= #{cartype},
+                    </if>
+                    <if test="color!=null and color!=''">
+                        color= #{color},
+                    </if>
+                    <if test="price!=null and price!=''">
+                        price= #{price},
+                    </if>
+                    <if test="rentprice!=null and rentprice!=''">
+                        rentprice=#{rentprice},
+                    </if>
+                    <if test="deposit!=null and deposit!=''">
+                        deposit= #{deposit},
+                    </if>
+                    <if test="isrenting!=null and isrenting!=''">
+                        isrenting=#{isrenting},
+                    </if>
+
+                    <if test="description!=null and description!=''">
+                        description= #{description},
+                    </if>
+                    <if test="carimg!=null and carimg!=''">
+                        carimg= #{carimg},
+                    </if>
+                    <if test="createtime!=null">
+                        createtime= #{createtime},
+                    </if>
+                </trim>
+            </set>
+        where carnumber=#{carnumber}
+    </update>
+<!--    根据carnumber修改车辆信息-->
+    <update id="updateCarByCarnumber">
+        update bus_car
+        <set>
+            <trim suffixOverrides=",">
+                <if test="cartype!=null and cartype!=''">
+                    cartype= #{cartype},
+                </if>
+                <if test="color!=null and color!=''">
+                    color= #{color},
+                </if>
+                <if test="price!=null and price!=''">
+                    price= #{price},
+                </if>
+                <if test="rentprice!=null and rentprice!=''">
+                    rentprice=#{rentprice},
+                </if>
+                <if test="deposit!=null and deposit!=''">
+                    deposit= #{deposit},
+                </if>
+                <if test="isrenting!=null and isrenting!=''">
+                    isrenting=#{isrenting},
+                </if>
+
+                <if test="description!=null and description!=''">
+                    description= #{description},
+                </if>
+                <if test="carimg!=null and carimg!=''">
+                    carimg= #{carimg},
+                </if>
+                <if test="createtime!=null">
+                    createtime= #{createtime},
+                </if>
+            </trim>
+        </set>
+        where carnumber=#{carnumber}
+    </update>
+    <!--    删除车辆-->
+    <delete id="deleteCar">
+        delete from bus_car where carnumber=#{carnumber}
+    </delete>
+<!--    批量删除-->
+    <delete id="deleteBatchCar">
+        delete from bus_car
+            where
+            carnumber
+                in
+               <trim prefix="(" suffix=")" suffixOverrides=",">
+                   <foreach collection="ids" item="id">
+                       #{id},
+                   </foreach>
+               </trim>
+    </delete>
+    <select id="queryAllCar" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bus_car
+        <where>
+            <if test="carnumber!=null and carnumber!=''">
+                and carnumber=#{carnumber}
+            </if>
+            <if test="cartype!=null and cartype!=''">
+                and cartype=#{cartype}
+            </if>
+            <if test="color!=null and color!=''">
+                and color=#{color}
+            </if>
+            <if test="description!=null and description!=''">
+                and description=#{description}
+            </if>
+            <if test="carimg!=null and carimg!=''">
+                and carimg=#{carimg}
+            </if>
+        </where>
+    </select>
+    <select id="getCarimgByNumber" resultType="java.lang.String">
+        select carimg from bus_car where carnumber=#{carnumber}
+    </select>
+    <select id="queryCarByCarNumber" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+            from bus_car where carnumber=#{carnumber}
+    </select>
+</mapper>

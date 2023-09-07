@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.sys.mapper.MenuMapper">
+    <resultMap id="BaseResultMap"
+               type="com.qfedu.sys.domain.Menu">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pid" jdbcType="INTEGER" property="pid" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="href" jdbcType="VARCHAR" property="href" />
+        <result column="spread" jdbcType="INTEGER" property="spread"/>
+        <result column="target" jdbcType="VARCHAR" property="target"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="available" jdbcType="INTEGER" property="available" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, pid, title, href, spread, target, icon, available
+    </sql>
+    <insert id="addMenu">
+        insert into sys_menu
+        <trim prefix="(" suffix=")">
+            <include refid="Base_Column_List"/>
+        </trim>
+        values
+            <trim prefix="(" suffix=")">
+                #{id},
+                #{pid},
+                #{title},
+                #{href},
+                #{spread},
+                #{target},
+                #{icon},
+                #{available}
+            </trim>
+    </insert>
+    <update id="updateMenu">
+        update sys_menu
+        <set>
+            <if test="pid != null">
+                pid = #{pid,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="href != null">
+                href = #{href,jdbcType=VARCHAR},
+            </if>
+            <if test="spread != null">
+                spread = #{spread,jdbcType=INTEGER},
+            </if>
+            <if test="target != null">
+                target = #{target,jdbcType=VARCHAR},
+            </if>
+            <if test="icon != null">
+                icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="available != null">
+                available = #{available,jdbcType=INTEGER},
+            </if>
+        </set>
+        where
+        id=#{id}
+    </update>
+    <delete id="deleteMenu">
+        delete from sys_menu
+        where id=#{id}
+    </delete>
+    <delete id="deleteBatchMenu">
+        delete from sys_menu
+        where id in
+              <trim prefix="(" suffix=")" suffixOverrides=",">
+                  <foreach collection="ids" item="id">
+                      #{id},
+                  </foreach>
+              </trim>
+    </delete>
+
+    <!--    查询所有菜单-->
+    <select id="getAllMenu" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+            from sys_menu
+        <where>
+            <if test="title!=null and title!=''">
+                and title like concat("%",#{title},"%")
+            </if>
+            <if test="available!=null">
+                and available=#{available}
+            </if>
+            <if test="id!=null">
+                and (id=#{id} or pid=#{id})
+            </if>
+        </where>
+    </select>
+    <select id="checkMenuHasChildren" resultType="java.lang.Integer">
+        select count(0) from sys_menu where pid=#{id}
+    </select>
+</mapper>

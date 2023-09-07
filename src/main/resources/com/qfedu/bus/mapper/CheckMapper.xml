@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.bus.mapper.CheckMapper">
+    <resultMap id="base_typeMap" type="com.qfedu.bus.domain.Check">
+        <id property="checkid" column="checkid"></id>
+        <result property="createtime" column="createtime"></result>
+        <result property="checkdate" column="checkdate"></result>
+        <result property="problem" column="problem"></result>
+        <result property="checkdesc" column="checkdesc"></result>
+        <result property="rentid" column="rentid"></result>
+        <result property="paymoney" column="paymoney"></result>
+        <result property="opername" column="opername"></result>
+    </resultMap>
+    <sql id="all_colum">
+        checkid
+        ,createtime,checkdate,problem,checkdesc,rentid,paymoney,opername
+    </sql>
+    <!--    保存表单-->
+    <insert id="saveCheck">
+        insert into bus_check
+        <trim prefix="(" suffix=")">
+            <include refid="all_colum"/>
+        </trim>
+        values
+        <trim prefix="(" suffix=")">
+            #{checkid},#{createtime},#{checkdate},#{problem},#{checkdesc},#{rentid},#{paymoney},#{opername}
+        </trim>
+    </insert>
+<!--    修改检查表-->
+    <update id="updateCheck">
+        update bus_check
+        <set>
+            checkid=#{checkid},
+            createtime=#{createtime},
+            checkdate=#{checkdate},
+            problem=#{problem},
+            checkdesc=#{checkdesc},
+            rentid=#{rentid},
+            paymoney=#{paymoney},
+            opername=#{opername}
+        </set>
+        where checkid=#{checkid}
+    </update>
+<!--    删除检查表-->
+    <delete id="deleteCheck">
+        delete from bus_check where  checkid=#{checkid}
+    </delete>
+    <delete id="deleteBatchCheck">
+        delete from bus_check
+            <where>
+                checkid in
+                <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <foreach collection="ids" item="id">
+                    #{id},
+                   </foreach>
+                </trim>
+             </where>
+    </delete>
+
+
+    <select id="queryAllload" resultType="com.qfedu.bus.domain.Check">
+
+    </select>
+    <select id="loadAllCheck" resultMap="base_typeMap">
+        select
+        <include refid="all_colum"/>
+        from bus_check
+        <where>
+            <if test="checkid!=null and checkid!=''">
+               checkid=#{checkid}
+            </if>
+            <if test="createtime!=null">
+                and createtime=#{createtime}
+            </if>
+            <if test="checkdate!=null">
+               and checkdate=#{checkdate}
+            </if>
+            <if test="problem!=null and problem!=''">
+               and problem=#{problem}
+            </if>
+            <if test="rentid!=null and rentid!=''">
+               and rentid=#{rentid}
+            </if>
+            <if test="paymoney!=null and paymoney!=''">
+               and paymoney=#{paymoney}
+            </if>
+            <if test="paymopernameoney!=null and opername!=''">
+                and opername=#{opername}
+            </if>
+        </where>
+    </select>
+</mapper>

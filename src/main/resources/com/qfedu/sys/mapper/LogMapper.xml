@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.sys.mapper.LogMapper">
+    <resultMap id="BaseResultMap"
+               type="com.qfedu.sys.domain.LogInfo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="loginname" jdbcType="VARCHAR"
+                property="loginname" />
+        <result column="loginip" jdbcType="VARCHAR"
+                property="loginip" />
+        <result column="logintime" jdbcType="TIMESTAMP"
+                property="logintime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, loginname, loginip, logintime
+    </sql>
+    <delete id="deleteLogInfo">
+        delete from sys_log_login where id=#{id}
+    </delete>
+    <delete id="deleteBatchLogInfo">
+        delete from sys_log_login where id in
+        <trim prefix="(" suffix=")">
+            <foreach collection="ids" item="id" separator=",">
+                #{id}
+            </foreach>
+        </trim>
+    </delete>
+    <select id="loadAllLogInfo" resultType="com.qfedu.sys.domain.LogInfo">
+        select <include refid="Base_Column_List"/>
+            from sys_log_login
+        <where>
+                <if test="loginname!=null and loginname!=''">
+                    loginname like concat("%",#{loginname},"%")
+                </if>
+            <if test="loginip!=null and loginip!=''">
+                and loginip like concat("%",#{loginip},"%")
+            </if>
+            <if test="startTime!=null">
+                and logintime >=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                <!-- and logintime &lt; = #{endTime} -->
+                and logintime <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

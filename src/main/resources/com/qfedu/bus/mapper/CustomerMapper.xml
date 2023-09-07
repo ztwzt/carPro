@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.bus.mapper.CustomerMapper">
+    <resultMap id="BaseResultMap"
+               type="com.qfedu.bus.domain.Customer">
+        <id column="identity" jdbcType="VARCHAR" property="identity"
+        />
+        <result column="custname" jdbcType="VARCHAR"
+                property="custname"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="address" jdbcType="VARCHAR" property="address"
+        />
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="career" jdbcType="VARCHAR" property="career"
+        />
+        <result column="createtime" jdbcType="TIMESTAMP"
+                property="createtime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        identity, custname, sex, address, phone, career, createtime
+    </sql>
+    <!--    添加客户-->
+    <insert id="insertSelective" parameterType="com.qfedu.bus.domain.Customer">
+        insert into bus_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="identity!=null">
+                identity,
+            </if>
+            <if test="custname!=null">
+                custname,
+            </if>
+            <if test="sex!=null">
+                sex,
+            </if>
+            <if test="address!=null">
+                address,
+            </if>
+            <if test="phone!=null">
+                phone,
+            </if>
+            <if test="career!=null">
+                career,
+            </if>
+            <if test="createtime!=null">
+                createtime,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="identity!=null">
+                #{identity,jdbcType=VARCHAR},
+            </if>
+            <if test="custname!=null">
+                #{custname,jdbcType=VARCHAR},
+            </if>
+            <if test="sex!=null">
+                #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="address!=null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="phone!=null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="career!=null">
+                #{career,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime!=null">
+                #{createtime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <!--    修改客户信息-->
+    <update id="updateCustomer" parameterType="com.qfedu.bus.domain.Customer">
+        update bus_customer set
+        <trim suffixOverrides=",">
+            <if test="identity!=null">
+                identity= #{identity,jdbcType=VARCHAR},
+            </if>
+            <if test="custname!=null">
+                custname= #{custname,jdbcType=VARCHAR},
+            </if>
+            <if test="sex!=null">
+                sex= #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="address!=null">
+                address= #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="phone!=null">
+                phone= #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="career!=null">
+                career= #{career,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime!=null">
+                createtime= #{createtime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+        where identity=#{identity}
+    </update>
+<!--  批量删除客户  -->
+    <delete id="updateBatchCustomer">
+        delete
+        from bus_customer
+        where identity in
+        <trim prefix="(" suffix=")">
+            <foreach collection="ids" item="id" separator=",">
+                #{id}
+            </foreach>
+        </trim>
+    </delete>
+    <!--    删除客户-->
+    <delete id="deleteCustomer" parameterType="string">
+        delete
+        from bus_customer
+        where identity =#{identity}
+    </delete>
+    <!--    查询客户-->
+    <select id="queryAllCustomer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bus_customer
+        <where>
+            <if test="identity!=null and identity!=''">
+                and identity like concat("%",#{identity},"%")
+            </if>
+            <if test="custname!=null and custname!=''">
+                and custname like concat("%",#{custname},"%")
+            </if>
+            <if test="sex!=null and sex!=''">
+                and sex =#{sex}
+            </if>
+            <if test="address!=null and address!=''">
+                and address like concat("%",#{address},"%")
+            </if>
+            <if test="phone!=null and phone!=''">
+                and phone like concat("%",#{phone},"%")
+            </if>
+            <if test="career!=null and career!=''">
+                and career like concat("%",#{career},"%")
+            </if>
+        </where>
+        order by createtime
+    </select>
+    <select id="queryCustomerById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+            from bus_customer
+        where identity =#{identity}
+    </select>
+</mapper>

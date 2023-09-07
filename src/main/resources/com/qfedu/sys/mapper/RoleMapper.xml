@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.sys.mapper.RoleMapper">
+    <resultMap id="base_colum" type="com.qfedu.sys.domain.Role">
+        <id column="roleid" jdbcType="INTEGER" property="roleid"/>
+        <result column="rolename" jdbcType="VARCHAR"
+                property="rolename"/>
+        <result column="roledesc" jdbcType="VARCHAR"
+                property="roledesc"/>
+        <result column="available" jdbcType="INTEGER"
+                property="available"/>
+    </resultMap>
+    <sql id="colum">
+        roleid, rolename, roledesc, available
+    </sql>
+<!--    //添加角色-->
+    <insert id="addRole">
+        insert into sys_role
+        <trim prefix="(" suffix=")">
+          rolename, roledesc, available
+        </trim>
+            values
+                <trim prefix="(" suffix=")">
+                #{rolename},
+                #{roledesc},
+                #{available}
+                </trim>
+    </insert>
+    <insert id="InsertRoleAndMenu">
+        insert into sys_role_menu
+        <trim prefix="(" suffix=")">
+            rid,
+            mid
+        </trim>
+            values
+          <foreach collection="ids" item="id" separator=",">
+              <trim prefix="(" suffix=")">
+              #{roleid},#{id}
+              </trim>
+          </foreach>
+    </insert>
+    <!--    //删除角色-->
+    <delete id="deleteRole">
+        delete from sys_role
+        where roleid=#{roleid}
+    </delete>
+<!--    //修改角色-->
+    <update id="updateRole">
+        update sys_role
+        <set>
+            <trim suffixOverrides=",">
+            <if test="roleid!=null">
+                roleid=#{roleid},
+            </if>
+                <if test="roleid!=null">
+                    rolename=#{rolename},
+                </if>
+                <if test="roleid!=null">
+                    roledesc=#{roledesc},
+                </if>
+                <if test="roleid!=null">
+                    available=#{available}
+                </if>
+            </trim>
+        </set>
+        where roleid=#{roleid}
+    </update>
+<!--    //批量删除角色-->
+    <delete id="deleteBatchRole">
+        delete from sys_role
+        where roleid in
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <foreach collection="ids" item="id">
+                #{id},
+            </foreach>
+        </trim>
+    </delete>
+    <delete id="deleteRoleAndMenu">
+        delete from sys_role_menu where rid=#{roleid}
+    </delete>
+    <!--    初始化表单-->
+    <select id="loadAllRole" resultMap="base_colum">
+        select <include refid="colum"></include>
+            from sys_role
+        <where>
+            <if test="rolename!=null and rolename!=''">
+                     rolename like concat("%",#{rolename},"%")
+            </if>
+            <if test="roledesc!=null and roledesc!=''">
+                and  roledesc like concat("%",#{roledesc},"%")
+            </if>
+            <if test="available!=null and available!=''">
+                 and available=#{available}
+            </if>
+        </where>
+    </select>
+<!--    //根据roleid 获取 mids-->
+    <select id="getMids" resultType="java.lang.Integer">
+        select mid from sys_role_menu where rid=#{roleid}
+    </select>
+</mapper>

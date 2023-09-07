@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.bus.mapper.RentMapper">
+
+    <resultMap id="BaseResultMap" type="com.qfedu.bus.domain.Rent">
+    <id column="rentid" jdbcType="VARCHAR" property="rentid" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="begindate" jdbcType="TIMESTAMP"
+            property="begindate" />
+    <result column="returndate" jdbcType="TIMESTAMP"
+            property="returndate" />
+    <result column="rentflag" jdbcType="INTEGER"
+            property="rentflag" />
+    <result column="identity" jdbcType="VARCHAR"
+            property="identity" />
+    <result column="carnumber" jdbcType="VARCHAR"
+            property="carnumber" />
+    <result column="opername" jdbcType="VARCHAR"
+            property="opername" />
+    <result column="createtime" jdbcType="TIMESTAMP"
+            property="createtime" />
+</resultMap>
+<sql id="Base_Column_List">
+rentid, price, begindate, returndate, rentflag, identity,
+carnumber, opername, createtime
+</sql>
+    <insert id="saveRent">
+        insert into bus_rent
+        <trim prefix="(" suffix=")">
+        <include refid="Base_Column_List"/>
+        </trim>
+        <trim prefix="values(" suffix=")">
+            #{rentid},
+            #{price},
+            #{begindate},
+            #{returndate},
+            #{rentflag},
+            #{identity},
+            #{carnumber},
+            #{opername},
+            #{createtime}
+        </trim>
+    </insert>
+<!--    编辑出租单信息-->
+    <update id="updateRent">
+        update bus_rent <set>
+        <if test="rentid!=null and rentid!=''">
+            rentid=#{rentid},
+        </if>
+        <if test="price!=null and price!=''">
+            price=#{price},
+        </if>
+        <if test="begindate!=null">
+            begindate=#{begindate},
+        </if>
+        <if test="returndate!=null">
+            returndate=#{returndate},
+        </if>
+        <if test="rentflag!=null and rentflag!=''">
+             rentflag=#{rentflag},
+        </if>
+        <if test="identity!=null and identity!=''">
+             identity=#{identity},
+        </if>
+        <if test="carnumber!=null and carnumber!=''">
+             carnumber=#{carnumber},
+        </if>
+        <if test="opername!=null and opername!=''">
+             opername=#{opername},
+        </if>
+        <if test="createtime!=null">
+             createtime=#{createtime},
+        </if>
+    </set>
+        where rentid=#{rentid}
+    </update>
+<!--     根据id修改信息-->
+    <update id="updateRentById">
+        update bus_rent <set>
+            <if test="rentid!=null and rentid!=''">
+                rentid=#{rentid},
+            </if>
+            <if test="price!=null and price!=''">
+                price=#{price},
+            </if>
+            <if test="begindate!=null">
+                begindate=#{begindate},
+            </if>
+            <if test="returndate!=null">
+                returndate=#{returndate},
+            </if>
+            <if test="rentflag!=null and rentflag!=''">
+                rentflag=#{rentflag},
+            </if>
+            <if test="identity!=null and identity!=''">
+                identity=#{identity},
+            </if>
+            <if test="carnumber!=null and carnumber!=''">
+                carnumber=#{carnumber},
+            </if>
+            <if test="opername!=null and opername!=''">
+                opername=#{opername},
+            </if>
+            <if test="createtime!=null">
+                createtime=#{createtime},
+            </if>
+        </set>
+        where rentid=#{rentid}
+    </update>
+    <!--    删除出租单-->
+    <delete id="deleteRent">
+        delete from bus_rent where rentid=#{rentid}
+    </delete>
+    <!--   查询用户是否存在-->
+    <select id="customerExist" resultType="com.qfedu.bus.domain.Customer">
+        select <include refid="com.qfedu.bus.mapper.CustomerMapper.Base_Column_List"/>
+            from bus_customer where identity=#{identity}
+    </select>
+    <!--   查询出租单信息-->
+    <select id="loadAllRent" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from bus_rent
+        <where>
+            <if test="rentid!=null and rentid!=''">
+               and rentid=#{rentid}
+            </if>
+            <if test="price!=null and price!=''">
+                and price=#{price}
+            </if>
+            <if test="begindate!=null">
+                and begindate=#{begindate},
+            </if>
+            <if test="returndate!=null">
+                and returndate=#{returndate}
+            </if>
+            <if test="rentflag!=null and rentflag!=''">
+                and rentflag=#{rentflag}
+            </if>
+            <if test="identity!=null and identity!=''">
+                and identity=#{identity}
+            </if>
+            <if test="carnumber!=null and carnumber!=''">
+                and carnumber=#{carnumber}
+            </if>
+            <if test="opername!=null and opername!=''">
+                and opername=#{opername}
+            </if>
+            <if test="createtime!=null">
+                and createtime=#{createtime}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryRenyById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+            from bus_rent
+            where rentid=#{rentid}
+    </select>
+</mapper>

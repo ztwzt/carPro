@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.sys.mapper.UserMapper">
+<!--    resultMap-->
+    <resultMap id="BaseResultMap" type="com.qfedu.sys.domain.User">
+        <id column="userid" jdbcType="INTEGER" property="userid" />
+        <result column="loginname" jdbcType="VARCHAR"
+                property="loginname" />
+        <result column="identity" jdbcType="VARCHAR"
+                property="identity" />
+        <result column="realname" jdbcType="VARCHAR"
+                property="realname" />
+        <result column="sex" jdbcType="INTEGER" property="sex" />
+        <result column="address" jdbcType="VARCHAR" property="address"
+        />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+        <result column="position" jdbcType="VARCHAR"
+                property="position" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="available" jdbcType="INTEGER"
+                property="available" />
+    </resultMap>
+<!--    sql片段-->
+    <sql id="Base_Colum_list">
+        userid,loginname,identity,realname,sex,address,phone,pwd,position,type,available
+    </sql>
+    <insert id="addUser">
+        insert into sys_user
+        <trim prefix="(" suffix=")">
+            <include refid="Base_Colum_list"/>
+        </trim>
+        values
+        <trim prefix="(" suffix=")">
+            #{userid},
+            #{loginname},
+            #{identity},
+            #{realname},
+            #{sex},
+            #{address},
+            #{phone},
+            #{pwd},
+            #{position},
+            #{type},
+            #{available}
+        </trim>
+    </insert>
+    <insert id="addRidsAndUids">
+        insert into sys_role_user
+        values
+            <foreach collection="ids" item="uid" separator=",">
+                (#{userid},#{uid})
+            </foreach>
+    </insert>
+    <update id="updateUser">
+        update sys_user
+        <set>
+            <if test="loginname != null">
+                loginname = #{loginname},
+            </if>
+            <if test="identity != null">
+                identity = #{identity},
+            </if>
+            <if test="realname != null">
+                realname = #{realname},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="position != null">
+                position = #{position},
+            </if>
+            <if test="available != null">
+                available = #{available},
+            </if>
+        </set>
+        where
+        userid=#{userid}
+    </update>
+<!--    重置密码-->
+    <update id="resetUserPwd">
+        update sys_user set pwd=#{pwd}
+        where userid={userid}
+    </update>
+    <delete id="deleteUser">
+        delete from sys_user
+        where userid=#{userid}
+    </delete>
+    <delete id="deleteBatchUser">
+        delete from sys_user
+        where userid in
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <foreach collection="ids" item="id">
+                #{id},
+            </foreach>
+        </trim>
+    </delete>
+    <delete id="deleteRids">
+        delete from sys_role_user
+        where rid in
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <foreach collection="roleids" item="roleid">
+        #{roleid},
+        </foreach>
+        </trim>
+    </delete>
+    <!--    用户登录查询-->
+    <select id="login" resultMap="BaseResultMap">
+select <include refid="Base_Colum_list"/> from sys_user
+where loginname=#{loginname} and pwd =#{pwd}
+    </select>
+<!--    查询所有用户-->
+    <select id="loadAllUser" resultMap="BaseResultMap">
+        select <include refid="Base_Colum_list"></include>
+        from sys_user
+            <where>
+            <trim suffixOverrides=",">
+                <if test="loginname!=null and loginname!=''">
+                    and userid like concat("%",#{userid},"%"),
+                </if>
+                <if test="address!=null and address!=''">
+                    and address like concat("%",#{address},"%"),
+                </if>
+                <if test="sex!=null and sex!=''">
+                    and sex=#{sex},
+                </if>
+                <if test="identity!=null and identity!=''">
+                    and identity like concat("%",#{identity},"%"),
+                </if>
+                <if test="phone!=null and phone!=''">
+                    and phone like concat("%",#{phone},"%"),
+                </if>
+                <if test="realname!=null and realname!=''">
+                    and realname like concat("%",#{realname},"%"),
+                </if>
+            </trim>
+            </where>
+    </select>
+    <select id="getRidsByUserId" resultType="java.lang.Integer">
+        select rid from sys_role_user where uid=#{userid}
+    </select>
+</mapper>
